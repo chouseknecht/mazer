@@ -30,7 +30,7 @@ def load(data_or_file_object, klass=None):
     except ValueError:
         raise
     except Exception as exc:
-        raise exceptions.GalaxyClientError("Error parsing collection metadata: %s" % exc.message)
+        raise exceptions.GalaxyClientError("Error parsing collection metadata: %s" % str(exc))
 
     log.debug('artifact_manifest from_kwargs: %s', collection_info)
 
