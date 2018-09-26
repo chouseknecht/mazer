@@ -4,7 +4,7 @@ collection_info:
   version: "1.2.3"
   format_version: 0.0
   author: "Javale McGee"
-  license: "GPLv2"
+  license: "GPL-3.0-or-later"
 format_version: 0.0
 files:
   - name: "roles/some_role/defaults/main.yml"

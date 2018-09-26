@@ -31,8 +31,9 @@ def _collection_info(namespace=None, name=None, version=None, author=None):
     name = name or 'some_name'
     version = version or '1.2.3'
     author = author or 'Rex Chapman'
+    license = 'GPL-3.0-or-later'
 
-    return CollectionInfo(namespace, name, version, author=author)
+    return CollectionInfo(namespace, name, version, author=author, license=license)
 
 
 def test_build(tmpdir):

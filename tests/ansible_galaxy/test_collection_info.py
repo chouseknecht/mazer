@@ -1,12 +1,14 @@
 
+import attr
 import logging
 import os
-
-import attr
+import pytest
+import yaml
 
 from ansible_galaxy import collection_info
 from ansible_galaxy.models.collection_info import CollectionInfo
 from ansible_galaxy import yaml_persist
+from ansible_galaxy import exceptions
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +20,7 @@ def test_load():
                 'name': 'some_name',
                 'version': '11.11.11',
                 'author': 'Carlos Boozer',
-                'license': 'GPLv2',
+                'license': 'GPL-3.0-or-later',
                 'format_version': 0.0}
 
     with open(test_data_path, 'r') as data_fd:
@@ -62,3 +64,69 @@ def test_save(tmpdir):
             read_fd.seek(0)
             buf = read_fd.read()
             log.debug('buf: %s', buf)
+
+
+def test_parse_error(tmpdir):
+    test_data = {
+        'namespace': 'foo',
+        'name': 'foo',
+        'format_version': 0.0,
+        'author': 'chouseknecht',
+        'license': 'GPL-3.0-or-later',
+        'version': '0.0.1',
+        'foo': 'foo',
+    }
+    file_name = "example_collection_info1.yml"
+    temp_dir = tmpdir.mkdir('mazer_collectio_info_unit_test')
+    temp_file = temp_dir.join(file_name).strpath
+    with open(temp_file, 'w') as fd:
+        yaml.dump(test_data, fd)
+    with pytest.raises(exceptions.GalaxyClientError):
+        with open(temp_file, 'r') as fd:
+            collection_info.load(fd)
+
+
+def test_license_error():
+    test_data = {
+        'namespace': 'foo',
+        'name': 'foo',
+        'format_version': 0.0,
+        'author': 'chouseknecht',
+        'license': 'GPLv2',
+        'version': '0.0.1'
+    }
+    try:
+        CollectionInfo(**test_data)
+    except ValueError as exc:
+        assert 'license' in exc.message
+
+
+def test_required_error():
+    test_data = {
+        'name': 'foo',
+        'format_version': 0.0,
+        'author': 'chouseknecht',
+        'license': 'GPL-3.0-or-later',
+        'version': '0.0.1'
+    }
+    try:
+        CollectionInfo(**test_data)
+    except ValueError as exc:
+        assert 'namespace' in exc.message
+        assert 'required' in exc.message
+
+
+def test_semantic_version_error():
+    test_data = {
+        'namespace': 'foo',
+        'name': 'foo',
+        'format_version': 0.0,
+        'author': 'chouseknecht',
+        'license': 'GPL-3.0-or-later',
+        'version': 'foo'
+    }
+    try:
+        CollectionInfo(**test_data)
+    except ValueError as exc:
+        assert 'version' in exc.message
+        assert 'semantic' in exc.message

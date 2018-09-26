@@ -12,6 +12,7 @@ COLLECTION_INFO1 = '''
 namespace: some_namespace
 name: some_name
 version: 3.1.4
+license: GPL-3.0-or-later
 '''
 
 
