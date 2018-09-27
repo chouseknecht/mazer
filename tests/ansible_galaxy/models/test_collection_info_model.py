@@ -1,4 +1,5 @@
 import logging
+import pytest
 
 from ansible_galaxy.models.collection_info import CollectionInfo
 
@@ -13,10 +14,9 @@ def test_license_error():
         'version': '0.0.1',
         'description': 'unit testing thing',
     }
-    try:
+    with pytest.raises(ValueError) as exc:
         CollectionInfo(**test_data)
-    except ValueError as exc:
-        assert 'license' in str(exc)
+    assert 'license' in str(exc)
 
 
 def test_required_error():
@@ -26,11 +26,9 @@ def test_required_error():
         'version': '0.0.1',
         'description': 'unit testing thing'
     }
-    try:
+    with pytest.raises(ValueError) as exc:
         CollectionInfo(**test_data)
-    except ValueError as exc:
-        assert 'name' in str(exc)
-        assert 'required' in str(exc)
+    assert 'name' in str(exc) in str(exc)
 
 
 def test_name_parse_error():
@@ -41,11 +39,9 @@ def test_name_parse_error():
         'version': '0.0.1',
         'description': 'unit testing thing'
     }
-    try:
+    with pytest.raises(ValueError) as exc:
         CollectionInfo(**test_data)
-    except ValueError as exc:
-        assert 'name' in str(exc)
-        assert 'format' in str(exc)
+    assert 'name' in str(exc)
 
 
 def test_type_list_error():
@@ -56,11 +52,9 @@ def test_type_list_error():
         'version': '0.0.1',
         'description': 'unit testing thing',
     }
-    try:
+    with pytest.raises(ValueError) as exc:
         CollectionInfo(**test_data)
-    except ValueError as exc:
-        assert 'authors' in str(exc)
-        assert 'list' in str(exc)
+    assert 'authors' in str(exc)
 
 
 def test_semantic_version_error():
@@ -71,11 +65,9 @@ def test_semantic_version_error():
         'version': 'foo',
         'description': 'unit testing thing',
     }
-    try:
+    with pytest.raises(ValueError) as exc:
         CollectionInfo(**test_data)
-    except ValueError as exc:
-        assert 'version' in str(exc)
-        assert 'semantic' in str(exc)
+    assert 'version' in str(exc)
 
 
 def test_namespace_property():
